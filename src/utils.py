@@ -1,30 +1,43 @@
 from bs4 import BeautifulSoup
 import re
+from nltk.tokenize import word_tokenize
 
-def review_to_words( review ):
+def tokenize_tweet( tweet ):
     """
     Return a list of cleaned word tokens from the raw review
 
     """
     #Remove any HTML tags and convert to lower case
-    review_text = BeautifulSoup(review).get_text().lower()
+    text = BeautifulSoup(tweet).get_text()
 
-    #Replace smiliey and frown faces, ! and ? with coded word SM{int} in case these are valuable
-    review_text=re.sub("(:\))",r' SM1',review_text)
-    review_text=re.sub("(:\()",r' SM2',review_text)
-    review_text=re.sub("(!)",r' SM3',review_text)
-    review_text=re.sub("(\?)",r' SM4',review_text)
+    # Remove links
+    text = re.sub(r"(?:\@|https?\://)\S+", "", text)
+    # Remove RTs
 
-    #keep 'not' and the next word as negation may be important
-    review_text=re.sub(r"not\s\b(.*?)\b", r"not_\1", review_text)
+    if text.startswith('RT'):
+        text = text[2:]
 
-    #keep letters and the coded words above, replace the rest with whitespace
-    nonnumbers_only=re.sub("[^a-zA-Z\_(SM\d)]"," ",review_text)
+    text = re.sub('[\W_]+', ' ', text)
+    text = text.strip()
+    words = [w for w in word_tokenize(text.lower()) if w is not 's']
+    return words
 
-    #Split into individual words on whitespace
-    words = nonnumbers_only.split()
 
-    #Remove stop words
-    words = [w for w in words]
+def clean_tweet( tweet ):
+    """
+    Return a list of cleaned word tokens from the raw review
 
-    return (words)
+    """
+    #Remove any HTML tags and convert to lower case
+    text = BeautifulSoup(tweet).get_text()
+
+    # Remove links
+    text = re.sub(r"(?:\@|https?\://)\S+", "", text)
+    # Remove RTs
+
+    if text.startswith('RT'):
+        text = text[2:]
+
+    text = re.sub('[\W_]+', ' ', text)
+    text = text.strip().lower()
+    return text
