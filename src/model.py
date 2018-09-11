@@ -13,9 +13,7 @@ import keras.callbacks
 from utils import tokenize_tweet
 from constants import WORD2VEC_VECTORS_BIN
 
-# train word2vec model
-#w2v = Word2Vec.load_word2vec_format(WORD2VEC_VECTORS_BIN, binary=True)
-w2v = {}
+w2v = Word2Vec.load_word2vec_format(WORD2VEC_VECTORS_BIN, binary=True)
 dimsize = 300
 sequence_size = 15
 
